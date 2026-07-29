@@ -16,12 +16,6 @@ app.get("/recording", async (req, res) => {
   const { callId, token } = req.query;
 
   if (token !== PROXY_SECRET) {
-    console.log(
-      "Unauthorized access attempt with token:",
-      token,
-      "expected:",
-      PROXY_SECRET
-    );
     return res.status(403).json({ error: "Forbidden" });
   }
 
@@ -40,12 +34,12 @@ app.get("/recording", async (req, res) => {
     const recordingUrl = call.data.artifact?.presignedStereoUrl;
 
     console.log("Call data:", recordingUrl);
-    
+
     if (!recordingUrl) {
       return res.status(404).send("No recording found for this call");
     }
 
-    return res.redirect(302, recordingUrl);
+    return res.json({ recordingUrl });
   } catch (err: any) {
     const status = err.response?.status || 500;
     console.error("Proxy error:", status, err.message);
